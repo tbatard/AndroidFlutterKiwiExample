@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:android_flutter_example/application_injector.dart';
+import 'package:android_flutter_example/screen/home_tab.dart';
+import 'package:android_flutter_example/screen/tab2_tab.dart';
+
 void main() => runApp(AndroidFlutterExample());
 
 class AndroidFlutterExample extends StatelessWidget {
+  AndroidFlutterExample() {
+    setup();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,11 +33,15 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  String textToDisplay = "";
+  int selectedTab = 0;
+  final tabs = [
+    HomeTab(),
+    Tab2Tab(),
+  ];
 
-  void displayText() {
+  void onItemTapped(int index) {
     setState(() {
-      textToDisplay = "Hello!";
+      selectedTab = index;
     });
   }
 
@@ -39,21 +51,15 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              '$textToDisplay',
-              key: Key("helloText"),
-            ),
-            MaterialButton(
-              onPressed: displayText,
-              key: Key("buttonHello"),
-              child: new Text("Click Me!"),
-            ),
-          ],
-        ),
+      body: tabs.elementAt(selectedTab),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home', key: Key("bottomNavigationHome"),)),
+          BottomNavigationBarItem(icon: Icon(Icons.business), title: Text('Tab2', key: Key("bottomNavigationTab2"),)),
+        ],
+        currentIndex: selectedTab,
+        fixedColor: Colors.deepPurple,
+        onTap: onItemTapped,
       ),
     );
   }

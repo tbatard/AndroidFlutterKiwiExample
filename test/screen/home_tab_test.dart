@@ -1,19 +1,26 @@
+import 'package:android_flutter_example/screen/home_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
-import 'package:android_flutter_example/main.dart';
+import '../fake_application_injector.dart';
+import '../mock_definition.dart';
+import 'screen_test_util.dart';
 
 void main() {
+  setupTest();
+
   testWidgets('home shows a button Display that displays "Hello!"',
       (WidgetTester tester) async {
-    await tester.pumpWidget(AndroidFlutterExample());
+    await tester.pumpWidget(buildTestableWidget(HomeTab()));
     var homeView = HomeView(tester);
+    var expectedText = "Some Text To Display";
 
-    expect(homeView.getText(), "");
+    when(Mocks.exampleService.getHello()).thenReturn(expectedText);
 
     await homeView.clickOnDisplayButton();
 
-    expect(homeView.getText(), "Hello!");
+    expect(homeView.getText(), expectedText);
   });
 }
 
@@ -22,7 +29,7 @@ class HomeView {
 
   final WidgetTester tester;
 
-  void clickOnDisplayButton() async {
+  Future<void> clickOnDisplayButton() async {
     await tester.tap(find.byKey(Key("buttonHello")));
     await tester.pump();
   }
